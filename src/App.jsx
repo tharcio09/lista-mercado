@@ -250,7 +250,7 @@ function App() {
               className="w-full bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md"
             >
               <Share2 size={20} /> 
-              Compartilhar no Zap
+              Compartilhar no Whatsapp
             </button>
           </div>
         )}
