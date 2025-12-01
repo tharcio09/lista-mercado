@@ -7,7 +7,7 @@
 
 <br/>
 
-[![Deploy com Vercel](https://img.shields.io/badge/Acessar_Demo_Online-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://SEU-LINK-AQUI.vercel.app)
+[![Deploy com Vercel](https://img.shields.io/badge/Acessar_Demo_Online-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://lista-mercado-sage.vercel.app/)
 
 > Um aplicativo de gestão de compras inteligente, focado em **UX Mobile-First**, organização automática e agilidade no supermercado.
 
