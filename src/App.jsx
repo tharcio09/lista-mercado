@@ -232,7 +232,7 @@ function App() {
         {abaAtiva === 'pendentes' && pendentes.length > 0 && (
           <div className="absolute bottom-0 left-0 w-full p-4 bg-white border-t border-gray-200 z-30 shadow-lg">
             <button onClick={enviarWhatsapp} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2">
-              <Share2 size={20} /> Compartilhar no Zap
+              <Share2 size={20} /> Compartilhar no WhatsApp
             </button>
           </div>
         )}
