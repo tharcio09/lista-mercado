@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react'
 import { PackagePlus, ShoppingCart, Share2, Search } from 'lucide-react'
-
-// Importando os componentes novos
 import Header from './components/Header'
 import Controls from './components/Controls'
 import ItemRow from './components/ItemRow'
 
-// Mantenha suas constantes CATEGORIAS e LISTA_MESTRA aqui
-// (Vou omitir para poupar espaço, mas copie do anterior)
+
 const CATEGORIAS = {
   todos: { label: 'Todos', emoji: '📋', color: 'bg-gray-800 text-white border-gray-800' },
   hortifruti: { label: 'Hortifruti', emoji: '🥬', color: 'bg-green-100 text-green-800 border-green-200' },
@@ -20,7 +17,7 @@ const CATEGORIAS = {
   frios: { label: 'Frios', emoji: '🧀', color: 'bg-pink-100 text-pink-800 border-pink-200' },
 }
 
-// --- SUBSTITUA A CONSTANTE LISTA_MESTRA NO SEU App.jsx POR ESTA ---
+
 
 const LISTA_MESTRA = [
   // --- HORTIFRUTI (Verde) ---
@@ -38,7 +35,7 @@ const LISTA_MESTRA = [
   { nome: 'Cheiro Verde', qtd: 1, cat: 'hortifruti' },
   { nome: 'Pimentão', qtd: 1, cat: 'hortifruti' },
   { nome: 'Chuchu/Abobrinha', qtd: 1, cat: 'hortifruti' },
-  { nome: 'Ovos (Dúzia)', qtd: 1, cat: 'hortifruti' }, // Ovos geralmente ficam no horti ou frios
+  { nome: 'Ovos (Dúzia)', qtd: 1, cat: 'hortifruti' },
 
   // --- AÇOUGUE (Vermelho) ---
   { nome: 'Carne Moída', qtd: 1, cat: 'carnes' },
@@ -85,7 +82,7 @@ const LISTA_MESTRA = [
   // --- PADARIA (Amarelo) ---
   { nome: 'Pão de Forma', qtd: 1, cat: 'padaria' },
   { nome: 'Pão Francês', qtd: 1, cat: 'padaria' },
-  { nome: 'Leite (Caixa)', qtd: 6, cat: 'padaria' }, // Leite longa vida
+  { nome: 'Leite (Caixa)', qtd: 6, cat: 'padaria' },
   { nome: 'Torrada', qtd: 1, cat: 'padaria' },
   { nome: 'Bolo', qtd: 1, cat: 'padaria' },
 
