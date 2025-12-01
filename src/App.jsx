@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
-import { PackagePlus, ShoppingCart, Share2, Search } from 'lucide-react'
+import { PackagePlus, ShoppingCart, Share2, Search, RotateCcw, X, Plus, Minus, Trash2, Check, Undo2 } from 'lucide-react'
 import Header from './components/Header'
 import Controls from './components/Controls'
 import ItemRow from './components/ItemRow'
-
 
 const CATEGORIAS = {
   todos: { label: 'Todos', emoji: '📋', color: 'bg-gray-800 text-white border-gray-800' },
@@ -16,8 +15,6 @@ const CATEGORIAS = {
   bebidas: { label: 'Bebidas', emoji: '🥤', color: 'bg-cyan-100 text-cyan-800 border-cyan-200' },
   frios: { label: 'Frios', emoji: '🧀', color: 'bg-pink-100 text-pink-800 border-pink-200' },
 }
-
-
 
 const LISTA_MESTRA = [
   // --- HORTIFRUTI (Verde) ---
@@ -122,8 +119,12 @@ const LISTA_MESTRA = [
 
 function App() {
   const [items, setItems] = useState(() => {
-    const saved = localStorage.getItem('minha-lista-mercado')
-    return saved ? JSON.parse(saved) : []
+    // Verificação de segurança para o SSR/Next.js (caso migre no futuro)
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('minha-lista-mercado')
+      return saved ? JSON.parse(saved) : []
+    }
+    return []
   })
   
   const [termoBusca, setTermoBusca] = useState('')
@@ -135,17 +136,18 @@ function App() {
     localStorage.setItem('minha-lista-mercado', JSON.stringify(items))
   }, [items])
 
-  // --- Ações ---
   const resetarLista = () => {
-    if (window.confirm("Reiniciar lista do zero?")) {
+    if (window.confirm("Isso vai apagar sua lista atual para começar uma nova compra. Confirmar?")) {
       setItems([]); setAbaAtiva('pendentes'); setTermoBusca('');
     }
   }
 
   const carregarTemplate = () => {
-    if (items.length > 0 && !window.confirm("Adicionar lista padrão?")) return
+    if (items.length > 0 && !window.confirm("Adicionar Lista Mestra por cima da atual?")) return
     const novos = LISTA_MESTRA.map((m, i) => ({ id: Date.now() + i, nome: m.nome, quantidade: m.qtd, categoria: m.cat, peguei: false }))
     setItems(prev => [...prev, ...novos])
+    setAbaAtiva('pendentes')
+    setCategoriaAtiva('todos')
   }
 
   const adicionarOuBuscar = (e) => {
@@ -167,7 +169,6 @@ function App() {
     window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank')
   }
 
-  // --- Filtros ---
   const pendentes = items.filter(i => !i.peguei)
   const carrinho = items.filter(i => i.peguei)
   let visiveis = abaAtiva === 'pendentes' ? pendentes : carrinho
@@ -175,9 +176,13 @@ function App() {
   if (termoBusca.trim()) visiveis = visiveis.filter(i => i.nome.toLowerCase().includes(termoBusca.toLowerCase()))
 
   return (
-    <div className="min-h-screen w-full flex justify-center bg-gray-100 sm:p-4 font-sans relative">
-      <div className="w-full max-w-lg bg-white sm:rounded-xl shadow-xl overflow-hidden h-screen sm:h-[90vh] flex flex-col relative">
+    // MUDANÇA 1: h-[100dvh] garante que o app ocupe APENAS a área visível real
+    <div className="h-[100dvh] w-full flex justify-center bg-gray-100 sm:p-4 font-sans overflow-hidden">
+      
+      {/* Container Principal: Flex Column para organizar Header, Conteúdo e Footer */}
+      <div className="w-full max-w-lg bg-white sm:rounded-xl shadow-xl h-full flex flex-col relative overflow-hidden">
         
+        {/* 1. TOPO (Fixo) */}
         <Header 
           itemsCount={items.length} 
           pendentesCount={pendentes.length} 
@@ -201,7 +206,8 @@ function App() {
           />
         )}
 
-        <div className="flex-1 overflow-y-auto p-3 bg-gray-50 pb-24">
+        {/* 2. MEIO (Scrollável) - flex-1 faz ele ocupar todo o espaço disponível */}
+        <div className="flex-1 overflow-y-auto p-3 bg-gray-50 scroll-smooth">
           {visiveis.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-gray-400 opacity-60 text-center px-6">
                {termoBusca ? (
@@ -209,10 +215,14 @@ function App() {
                ) : abaAtiva === 'pendentes' && categoriaAtiva === 'todos' ? (
                  <>
                    <PackagePlus size={48} className="mb-4 text-blue-300" />
-                   <p className="mb-4">Lista vazia.</p>
-                   <button onClick={carregarTemplate} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">Carregar Sugestão</button>
+                   <p className="mb-4">Sua lista está vazia.</p>
+                   <button onClick={carregarTemplate} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg">
+                     Carregar Lista Mestra
+                   </button>
                  </>
-               ) : <p>Vazio.</p>}
+               ) : (
+                 <><ShoppingCart size={48} className="mb-4" /><p>Lista vazia.</p></>
+               )}
             </div>
           ) : (
             visiveis.map(item => (
@@ -227,18 +237,28 @@ function App() {
               />
             ))
           )}
+          {/* Espaço extra no final do scroll para garantir que o último item não cole no botão */}
+          <div className="h-4" /> 
         </div>
 
+        {/* 3. RODAPÉ (Fixo na estrutura, não absolute) */}
+        {/* MUDANÇA 2: Agora é um bloco normal dentro do flex, então ele "empurra" a lista e nunca sobrepõe */}
         {abaAtiva === 'pendentes' && pendentes.length > 0 && (
-          <div className="absolute bottom-0 left-0 w-full p-4 bg-white border-t border-gray-200 z-30 shadow-lg">
-            <button onClick={enviarWhatsapp} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2">
-              <Share2 size={20} /> Compartilhar no WhatsApp
+          <div className="p-4 bg-white border-t border-gray-200 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] pb-safe">
+            <button 
+              onClick={enviarWhatsapp} 
+              className="w-full bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md"
+            >
+              <Share2 size={20} /> 
+              Compartilhar no Zap
             </button>
           </div>
         )}
+
       </div>
     </div>
   )
 }
 
 export default App
+
